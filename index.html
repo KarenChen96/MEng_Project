@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="/socket.io/socket.io.js"></script> <!-- include socket.io client side script -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
+	</head>
+	
+	<style>
+	body{
+		background-color: #EEE;
+	}
+
+	#header{
+		background-color: #66CCFF;
+		color: white;
+		text-align: center;
+	}
+	
+	container{
+		background-color: white;
+		width: 1800px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+	
+	#content{
+		padding: 10px, 10px;
+	}
+	
+	#temp_container{
+		width: 20%;
+		float: left;
+	}
+	
+	#humid_container{
+		width: 20%;
+		float: left;
+	}
+	
+	#light_container{
+		width: 20%;
+		float: left;
+	}
+	
+	#sound_container{
+		width: 20%;
+		float: left;
+	}
+	
+	#motion_container{
+		width: 20%;
+		float: left;
+	}
+	
+	
+	#footer{
+		clear:both;
+	}
+			
+	</style>
+	
+	
+	<body>		
+		<script>		
+			var socket = io.connect(); //load socket.io-client and connect to the host that serves the page
+			socket.on('date', function (data) { 
+				$('#date').text(data.date);
+			});
+			
+			socket.on('data1', function (data) { //get sensor data
+				$('#temp').text(data.data1);
+			});
+			
+			socket.on('data2', function (data) { //get sensor data
+				$('#humid').text(data.data2);
+			});
+			
+			socket.on('data3', function (data) { //get sensor data
+				$('#lux').text(data.data3);
+			});
+			
+			socket.on('data4', function (data) { //get sensor data
+				$('#sound').text(data.data4);
+			});
+			socket.on('data5', function (data) { //get sensor data
+				$('#motion').text(data.data5);
+			});			
+			
+			socket.on('flag1',function(data) {
+					$('#demo').text(data.flag1);
+				if(data.flag1 === "red") {
+					document.getElementById("temp").style.color = "red";
+					document.getElementById("temp_message").style.color = "red";					
+				} else if(data.flag1 === "blue") {
+					document.getElementById("temp").style.color = "blue";
+				} else {
+					document.getElementById("temp").style.color = "black";
+				}		
+			});
+			
+			//socket.on('temp_info',function(data) {
+				//$('#temp_message').text(data.temp_info);
+			//}
+			
+			
+			//send range of factors back to servertest.js
+			function myFunction() {
+				var x = document.getElementById("temp_form1");
+				var x2 = document.getElementById("temp_form2");
+				socket.emit('client_data',{'letter': x.elements[0].value});
+				socket.emit('client_data2',{'letter2': x2.elements[0].value});
+				var text = x.elements[0].value + "<br>";
+				document.getElementById("demo").innerHTML = text;									
+			}	
+				
+			$(document).ready(function(){
+				$('#text').keypress(function(e){
+					socket.emit('client_data',{'letter': e});
+					//socket.emit('client_data',{'letter': String.fromCharCode(e.charCode)});
+				});
+			});
+		</script>
+		
+		<div id="container">
+			
+			<div id="header">
+				<h1>Sleep Monitor</h1>
+				<link rel="stylesheet" type="text/css" href="/var/www/html/pagestyle.css" />
+			</div>
+			
+			<h2>Time</h2>
+			<div id="date"> 
+			</div>
+			
+			<textarea id = "text"></textarea>
+			
+			<p id="demo"></p>
+			
+			<p>Click "Confirm" to set the range of environment factors by the value in the forms.</p>
+			
+			<div id="content">
+				
+				<div id = "temp_container">
+					<h2>Temprature</h2>
+					
+					<form id="temp_form1" >
+					Set upper bound: <input type="text" name="fname" ><br><br>
+					</form>
+				
+					<form id = "temp_form2">
+					Set lower bound: <input type="text" name="lowe" ><br><br>
+					</form>				
+				
+					<button onclick="myFunction()">Confirm</button>
+					
+					<p>Current tempratue is: </p>
+					<div id="temp">
+					</div>	
+					<p>Tips: </p>
+					<div id="temp_info">
+					</div>		
+				</div>
+				
+				<div id = "humid_container"> 
+					<h2>Humidity</h2>
+					
+					<form id="humid_form1" >
+					Set upper bound: <input type="text" name="fname" ><br><br>
+					</form>
+				
+					<form id = "humid_form2">
+					Set lower bound: <input type="text" name="lowe" ><br><br>
+					</form>							
+				
+					<button onclick="myFunction()">Confirm</button>
+					
+					<p>Current humidity is: </p>
+					<div id="humid">
+					</div>
+				</div>				
+				
+				<div id = "light_container">
+					<h2>Light</h2>
+					
+					<form id="light_form1" >
+					Set upper bound: <input type="text" name="fname" ><br><br>
+					</form>
+				
+					<form id = "light_form2">
+					Set lower bound: <input type="text" name="lowe" ><br><br>
+					</form>								
+				
+					<button onclick="myFunction()">Confirm</button>
+					
+					<p>Current lux is: </p>
+					<div id="lux">					
+					</div>
+				</div>
+				
+				<div id = "sound_container">
+					<h2>Sound</h2>
+					
+					<form id="sound_form1" >
+					Set upper bound: <input type="text" name="fname" ><br><br>
+					</form>
+				
+					<form id = "sound_form2">
+					Set lower bound: <input type="text" name="lowe" ><br><br>
+					</form>									
+				
+					<button onclick="myFunction()">Confirm</button>
+					
+					<p>Current sound is: </p>					
+					<div id="sound">					
+				    </div>
+				</div>
+				
+			    <div id = "motion_container">
+				    <h2>Motion</h2>
+				    <div id="motion">
+						<p>The patient is sleeping normally.</p>
+					</div>
+			    </div>
+			    
+				
+				<div id="footer">				
+					<p><br />--------------------------------------------------------</p>
+					Copyright &copy 2018Chun Chen
+				</div>
+			</div>	
+			
+		</div>
+	</body>
+</html>
