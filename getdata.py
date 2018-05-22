@@ -17,27 +17,33 @@ while True:
     args = lines.split("\n")
     t = args[0]
     data = t.split(" ")
+    #data = [0,1,2,3,4,5,6]
     
-    if len(data) >= 8:
-        sound = data[0]
-        lux = data[1]
-        r = data[2]
-        g = data[3]
-        b = data[4]
-        c = data[5]
-        temp = data[6]
-        humid = data[7]
+    if len(data) >= 6:  
+        print(data)
+        sound = data[0] #average sound
+        lux = data[1] #total average light
+        g = data[2] #green light
+        b = data[3] #blue light
+        temp = data[4]
+        humid = data[5]
 
         datetimeWrite = (time.strftime("%Y-%m-%d ") + time.strftime("%H:%M:%S"))
-        datetime = time.strftime("%H:%M:%S")
+        datetime = time.strftime("%H")
+        datetime = datetime + " "
+        #print(datetime)
+       
+        #ser.write(datetime) #send hh to Arduino
+        
         #sensor_data = (temp,humid,lux,r,b,g,c,sound) 
         #sensor_data = temp + " " + humid 
         dict1 = temp
         dict2 = humid
         #fin = json.loads(json.dumps([dict1,dict2]))
         #fin = json.dumps([dict1,dict2])
-        fin = json.dumps([temp,humid,lux,sound])
+        fin = json.dumps([sound,lux,g,b,temp,humid])
         print(type(fin))
+        print((fin))
         time.sleep(1)
  
         try:
